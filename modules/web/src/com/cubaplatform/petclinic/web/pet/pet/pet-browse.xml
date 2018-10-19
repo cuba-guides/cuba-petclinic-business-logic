@@ -35,6 +35,12 @@
                         caption="msg://calculateDiscount"
                         icon="MONEY"
                 />
+                <action id="fetchContact"
+                        invoke="onFetchContact"
+                        trackSelection="true"
+                        caption="msg://fetchContact"
+                        icon="PHONE"
+                />
             </actions>
             <columns>
                 <column id="name"/>
@@ -55,6 +61,9 @@
                         action="petsTable.remove"/>
                 <button id="calculateDiscount"
                         action="petsTable.calculateDiscount"
+                        />
+                <button id="fetchContact"
+                        action="petsTable.fetchContact"
                         />
             </buttonsPanel>
         </groupTable>

@@ -1,13 +1,18 @@
 package com.cubaplatform.petclinic.web.pet.pet;
 
 import com.cubaplatform.petclinic.entity.pet.Pet;
+import com.cubaplatform.petclinic.web.pet.pet.calculation.Contact;
+import com.cubaplatform.petclinic.web.pet.pet.calculation.PetContactFetcher;
 import com.haulmont.cuba.gui.components.AbstractLookup;
 import com.haulmont.cuba.gui.components.GroupTable;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class PetBrowse extends AbstractLookup {
 
+    @Inject
+    PetContactFetcher petContactFetcher;
 
     @Inject
     protected GroupTable<Pet> petsTable;
@@ -34,5 +39,20 @@ public class PetBrowse extends AbstractLookup {
             discount = 5;
         }
         return discount;
+    }
+
+    public void onFetchContact() {
+
+        Pet pet = petsTable.getSingleSelected();
+
+        Optional<Contact> contactInformation = petContactFetcher.findContact(pet);
+
+        if (contactInformation.isPresent()) {
+            showNotification(contactInformation.get().toString());
+        }
+        else {
+            showNotification("No contact information found", NotificationType.ERROR);
+        }
+
     }
 }
