@@ -1,4 +1,4 @@
-package com.cubaplatform.petclinic.web.pet.pet.contact;
+package com.cubaplatform.petclinic.contact;
 
 import com.cubaplatform.petclinic.entity.owner.Owner;
 import com.cubaplatform.petclinic.entity.pet.Pet;

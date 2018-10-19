@@ -1,6 +1,6 @@
 package com.cubaplatform.petclinic.web.pet.pet;
 
-import com.cubaplatform.petclinic.web.pet.pet.contact.Contact;
+import com.cubaplatform.petclinic.contact.Contact;
 import com.haulmont.cuba.gui.components.Frame;
 import org.springframework.stereotype.Component;
 

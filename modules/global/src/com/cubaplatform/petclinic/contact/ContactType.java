@@ -1,4 +1,4 @@
-package com.cubaplatform.petclinic.web.pet.pet.contact;
+package com.cubaplatform.petclinic.contact;
 
 public enum ContactType {
         EMAIL,

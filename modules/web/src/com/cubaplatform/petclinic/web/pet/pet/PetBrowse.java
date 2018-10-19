@@ -1,8 +1,8 @@
 package com.cubaplatform.petclinic.web.pet.pet;
 
 import com.cubaplatform.petclinic.entity.pet.Pet;
-import com.cubaplatform.petclinic.web.pet.pet.contact.Contact;
-import com.cubaplatform.petclinic.web.pet.pet.contact.PetContactFetcher;
+import com.cubaplatform.petclinic.contact.Contact;
+import com.cubaplatform.petclinic.contact.PetContactFetcher;
 import com.haulmont.cuba.gui.components.AbstractLookup;
 import com.haulmont.cuba.gui.components.GroupTable;
 
