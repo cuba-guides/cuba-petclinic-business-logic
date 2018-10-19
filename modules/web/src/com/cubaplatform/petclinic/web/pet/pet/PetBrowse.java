@@ -12,10 +12,18 @@ public class PetBrowse extends AbstractLookup {
     @Inject
     protected GroupTable<Pet> petsTable;
 
-    public void calculateDiscount() {
+    public void onCalculateDiscount() {
 
         Pet pet = petsTable.getSingleSelected();
 
+        int discount = calculateDiscount(pet);
+
+        String discountMessage = "Discount for " + pet.getName() + ": " + discount + "%";
+
+        showNotification(discountMessage, NotificationType.TRAY);
+    }
+
+    private int calculateDiscount(Pet pet) {
         int discount = 0;
 
         int visitAmount = pet.getVisits().size();
@@ -25,7 +33,6 @@ public class PetBrowse extends AbstractLookup {
         else if (visitAmount > 5) {
             discount = 5;
         }
-
-        showNotification("Discount for " + pet.getName() + ": " + discount + "%", NotificationType.TRAY);
+        return discount;
     }
 }

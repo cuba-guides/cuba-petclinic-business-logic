@@ -30,7 +30,7 @@
                 <action id="edit"/>
                 <action id="remove"/>
                 <action id="calculateDiscount"
-                        invoke="calculateDiscount"
+                        invoke="onCalculateDiscount"
                         trackSelection="true"
                         caption="msg://calculateDiscount"
                         icon="MONEY"
