@@ -10,10 +10,24 @@
                     class="com.cubaplatform.petclinic.entity.pet.Pet"
                     view="pet-with-owner-and-type"/>
     </dsContext>
+    <actions>
+        <action id="fetchContact"
+                invoke="onFetchContact"
+                caption="msg://fetchContact"
+                icon="PHONE"
+        />
+    </actions>
     <dialogMode height="600"
                 width="800"/>
     <layout expand="windowActions"
             spacing="true">
+
+        <buttonsPanel id="buttonsPanel"
+                      alwaysVisible="true">
+            <button id="fetchContactBtn"
+                    action="fetchContact"
+            />
+        </buttonsPanel>
         <fieldGroup id="fieldGroup"
                     datasource="petDs">
             <column width="250px">

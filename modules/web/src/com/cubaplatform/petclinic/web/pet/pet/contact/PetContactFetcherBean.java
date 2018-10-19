@@ -1,8 +1,9 @@
-package com.cubaplatform.petclinic.web.pet.pet.calculation;
+package com.cubaplatform.petclinic.web.pet.pet.contact;
 
 import com.cubaplatform.petclinic.entity.owner.Owner;
 import com.cubaplatform.petclinic.entity.pet.Pet;
 import com.haulmont.cuba.core.global.DataManager;
+import com.haulmont.cuba.core.global.Messages;
 import com.haulmont.cuba.core.global.View;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,8 @@ public class PetContactFetcherBean implements PetContactFetcher {
     @Inject
     DataManager dataManager;
 
+    @Inject
+    Messages messages;
 
     @Override
     public Optional<Contact> findContact(Pet pet) {
@@ -24,13 +27,17 @@ public class PetContactFetcherBean implements PetContactFetcher {
 
         if (petOwner.isPresent()) {
 
-            String telephone = petOwner.get().getTelephone();
-            String email = petOwner.get().getEmail();
+            Owner owner = petOwner.get();
+            String telephone = owner.getTelephone();
+            String email = owner.getEmail();
+            String address = formatOwnerAddress(owner);
 
             if (isAvailable(telephone)) {
                 return createContact(telephone, ContactType.TELEPHONE);
             } else if (isAvailable(email)) {
                 return createContact(email, ContactType.EMAIL);
+            } else if (isAvailable(address)) {
+                return createContact(address, ContactType.ADDRESS);
             } else {
                 return Optional.empty();
             }
@@ -40,11 +47,17 @@ public class PetContactFetcherBean implements PetContactFetcher {
 
     }
 
+
     private Optional<Contact> createContact(String contactValue, ContactType contactType) {
         Contact contact = new Contact();
         contact.setValue(contactValue);
         contact.setType(contactType);
         return Optional.of(contact);
+    }
+
+
+    private String formatOwnerAddress(Owner owner) {
+        return messages.formatMessage(this.getClass(), "ownerAddressFormat", owner.getFirstName(), owner.getLastName(), owner.getAddress(), owner.getCity());
     }
 
     private Optional<Owner> loadOwnerFor(Pet pet) {
