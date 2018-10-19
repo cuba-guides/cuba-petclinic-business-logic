@@ -14,6 +14,9 @@ import com.cubaplatform.petclinic.entity.owner.Owner;
 import javax.validation.constraints.NotNull;
 import javax.persistence.UniqueConstraint;
 import com.haulmont.chile.core.annotations.NamePattern;
+import com.cubaplatform.petclinic.entity.visit.Visit;
+import java.util.List;
+import javax.persistence.OneToMany;
 
 @NamePattern("%s - %s|identificationNumber,name")
 @Table(name = "PETCLINIC_PET", uniqueConstraints = {
@@ -38,6 +41,18 @@ public class Pet extends NamedEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_ID")
     protected Owner owner;
+
+
+    @OneToMany(mappedBy = "pet")
+    protected List<Visit> visits;
+
+    public void setVisits(List<Visit> visits) {
+        this.visits = visits;
+    }
+
+    public List<Visit> getVisits() {
+        return visits;
+    }
 
 
     public void setIdentificationNumber(String identificationNumber) {

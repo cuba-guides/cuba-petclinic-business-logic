@@ -8,7 +8,7 @@
     <dsContext>
         <groupDatasource id="petsDs"
                          class="com.cubaplatform.petclinic.entity.pet.Pet"
-                         view="pet-with-owner-and-type">
+                         view="pet-with-owner-and-type-and-visits">
             <query>
                 <![CDATA[select e from petclinic$Pet e]]>
             </query>
@@ -29,6 +29,12 @@
                 <action id="create"/>
                 <action id="edit"/>
                 <action id="remove"/>
+                <action id="calculateDiscount"
+                        invoke="calculateDiscount"
+                        trackSelection="true"
+                        caption="msg://calculateDiscount"
+                        icon="MONEY"
+                />
             </actions>
             <columns>
                 <column id="name"/>
@@ -47,6 +53,9 @@
                         action="petsTable.edit"/>
                 <button id="removeBtn"
                         action="petsTable.remove"/>
+                <button id="calculateDiscount"
+                        action="petsTable.calculateDiscount"
+                        />
             </buttonsPanel>
         </groupTable>
     </layout>
