@@ -26,4 +26,14 @@
         <property name="owner"
                   view="_local"/>
     </view>
+    <view class="com.cubaplatform.petclinic.entity.pet.Pet"
+          extends="_local"
+          name="pet-with-owner-and-type-and-visits">
+        <property name="type"
+                  view="_minimal"/>
+        <property name="owner"
+                  view="_local"/>
+        <property name="visits"
+                  view="_local"/>
+    </view>
 </views>
