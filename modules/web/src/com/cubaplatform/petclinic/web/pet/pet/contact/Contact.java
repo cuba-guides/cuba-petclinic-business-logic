@@ -1,4 +1,4 @@
-package com.cubaplatform.petclinic.web.pet.pet.calculation;
+package com.cubaplatform.petclinic.web.pet.pet.contact;
 
 public class Contact {
 
