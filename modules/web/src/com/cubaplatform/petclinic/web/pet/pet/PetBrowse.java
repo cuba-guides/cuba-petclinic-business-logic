@@ -3,6 +3,7 @@ package com.cubaplatform.petclinic.web.pet.pet;
 import com.cubaplatform.petclinic.entity.pet.Pet;
 import com.cubaplatform.petclinic.contact.Contact;
 import com.cubaplatform.petclinic.contact.PetContactFetcher;
+import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.AbstractLookup;
 import com.haulmont.cuba.gui.components.GroupTable;
 
@@ -48,11 +49,14 @@ public class PetBrowse extends AbstractLookup {
         int visitAmount = pet.getVisits().size();
         if (visitAmount > 10) {
             discount = 10;
-        }
-        else if (visitAmount > 5) {
+        } else if (visitAmount > 5) {
             discount = 5;
         }
         return discount;
     }
 
+    public void onCreateDiseaseWarningMailing() {
+
+        openWindow("create-disease-warning-mailing", WindowManager.OpenType.DIALOG);
+    }
 }
