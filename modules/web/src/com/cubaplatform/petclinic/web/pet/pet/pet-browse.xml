@@ -41,6 +41,11 @@
                         caption="msg://fetchContact"
                         icon="PHONE"
                 />
+                <action id="createDiseaseWarningMailing"
+                        caption="msg://createDiseaseWarningMailing"
+                        icon="font-icon:BULLHORN"
+                        invoke="onCreateDiseaseWarningMailing"
+                />
             </actions>
             <columns>
                 <column id="name"/>
@@ -65,6 +70,8 @@
                 <button id="fetchContactBtn"
                         action="petsTable.fetchContact"
                         />
+                <button id="createDiseaseWarningMailingBtn"
+                        action="petsTable.createDiseaseWarningMailing"/>
             </buttonsPanel>
         </groupTable>
     </layout>
