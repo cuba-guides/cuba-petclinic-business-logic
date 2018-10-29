@@ -1,31 +1,54 @@
 package com.cubaplatform.petclinic.web.pet.pet;
 
+import com.cubaplatform.petclinic.entity.pet.PetType;
 import com.cubaplatform.petclinic.service.DiseaseWarningMailingService;
-import com.haulmont.cuba.gui.components.AbstractWindow;
+import com.haulmont.cuba.gui.Notifications;
+import com.haulmont.cuba.gui.components.Action;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.TextField;
-
+import com.haulmont.cuba.gui.screen.Screen;
+import com.haulmont.cuba.gui.screen.Subscribe;
+import com.haulmont.cuba.gui.screen.UiController;
+import com.haulmont.cuba.gui.screen.UiDescriptor;
 import javax.inject.Inject;
 
-public class CreateDiseaseWarningMailing extends AbstractWindow {
+@UiController
+@UiDescriptor("create-disease-warning-mailing.xml")
+public class CreateDiseaseWarningMailing extends Screen {
+
+
+    @Subscribe
+    protected void onBeforeShow(BeforeShowEvent beforeShowEvent) {
+        getScreenData().loadAll();
+    }
+
 
     @Inject
     protected DiseaseWarningMailingService diseaseWarningMailingService;
 
     @Inject
-    protected TextField city;
+    protected TextField<String> city;
 
     @Inject
-    protected TextField disease;
+    protected TextField<String> disease;
 
     @Inject
-    protected LookupField petType;
+    protected LookupField<PetType> petType;
 
-    public void createDiseaseWarningMailing() {
+    @Inject
+    protected Notifications notifications;
 
-        int endangeredPets = diseaseWarningMailingService.warnAboutDisease(petType.getValue(), disease.getValue(), city.getValue());
+    @Subscribe("createDiseaseWarningMailing")
+    protected void createDiseaseWarningMailing(Action.ActionPerformedEvent event) {
 
-        closeAndRun(COMMIT_ACTION_ID, () -> showNotification(endangeredPets + " Owner(s) of endangered Pets have been notified", NotificationType.TRAY));
+        int endangeredPets = diseaseWarningMailingService.warnAboutDisease(petType.getValue(),
+            disease.getValue(), city.getValue());
 
+        closeWithCommit().then(() ->
+            notifications.create()
+                .setCaption(endangeredPets + " Owner(s) of endangered Pets have been notified")
+                .setType(Notifications.NotificationType.TRAY)
+                .show()
+        );
     }
 }

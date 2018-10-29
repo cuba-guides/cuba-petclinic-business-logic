@@ -5,6 +5,8 @@ import com.cubaplatform.petclinic.entity.pet.PetType;
 import com.haulmont.cuba.core.app.EmailerAPI;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.EmailInfo;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -16,52 +18,68 @@ import java.util.Map;
 @Service(DiseaseWarningMailingService.NAME)
 public class DiseaseWarningMailingServiceBean implements DiseaseWarningMailingService {
 
-    @Inject
-    protected DataManager dataManager;
+  @Inject
+  protected DataManager dataManager;
 
 
-    @Inject
-    protected EmailerAPI emailerAPI;
+  @Inject
+  protected EmailerAPI emailerAPI;
 
 
-    @Override
-    public int warnAboutDisease(PetType petType, String disease, String city) {
+  @Override
+  public int warnAboutDisease(PetType petType, String disease, String city) {
 
-        List<Pet> petsInDiseaseCity = dataManager.load(Pet.class)
-                .query("select e from petclinic$Pet e where e.owner.city = :ownerCity and e.type.id = :petType")
-                .parameter("ownerCity", city)
-                .parameter("petType", petType)
-                .view("pet-with-owner-and-type")
-                .list();
+    List<Pet> petsInDiseaseCity = dataManager.load(Pet.class)
+        .query(
+            "select e from petclinic_Pet e where e.owner.city = :ownerCity and e.type = :petType")
+        .parameter("ownerCity", city)
+        .parameter("petType", petType)
+        .view("pet-with-owner-and-type")
+        .list();
 
-        petsInDiseaseCity.forEach(pet -> {
+    List<Pet> petsWithEmail = petsInDiseaseCity
+        .stream()
+        .filter(this::ownerHasEmail)
+        .collect(Collectors.toList());
 
-            String emailSubject = "Warning about " + disease + " in the Area of " + city;
 
-            Map<String, Serializable> templateParameters = getTemplateParams(disease, city, pet);
+    petsWithEmail
+        .forEach(pet -> {
 
-            EmailInfo email = new EmailInfo(
-                    pet.getOwner().getEmail(),
-                    emailSubject,
-                    null,
-                    "com/cubaplatform/petclinic/templates/disease-warning-mailing.txt",
-                    templateParameters
-            );
+          String emailSubject = "Warning about " + disease + " in the Area of " + city;
 
-            emailerAPI.sendEmailAsync(email);
+          Map<String, Serializable> templateParameters = getTemplateParams(disease, city, pet);
+
+          String ownerEmail = pet.getOwner().getEmail();
+
+          EmailInfo email = new EmailInfo(
+              ownerEmail,
+              emailSubject,
+              null,
+              "com/cubaplatform/petclinic/templates/disease-warning-mailing.txt",
+              templateParameters
+          );
+
+          emailerAPI.sendEmailAsync(email);
+
         });
 
-        return petsInDiseaseCity.size();
-    }
+    return petsWithEmail.size();
+  }
 
-    private Map<String, Serializable> getTemplateParams(String disease, String city, Pet pet) {
-        Map<String, Serializable> templateParameters = new HashMap<>();
+  private boolean ownerHasEmail(Pet pet) {
+    String ownerEmail = pet.getOwner().getEmail();
+    return !StringUtils.isEmpty(ownerEmail);
+  }
 
-        templateParameters.put("owner", pet.getOwner());
-        templateParameters.put("pet", pet);
-        templateParameters.put("disease", disease);
-        templateParameters.put("city", city);
-        return templateParameters;
-    }
+  private Map<String, Serializable> getTemplateParams(String disease, String city, Pet pet) {
+    Map<String, Serializable> templateParameters = new HashMap<>();
+
+    templateParameters.put("owner", pet.getOwner());
+    templateParameters.put("pet", pet);
+    templateParameters.put("disease", disease);
+    templateParameters.put("city", city);
+    return templateParameters;
+  }
 
 }
