@@ -29,47 +29,48 @@ public class DiseaseWarningMailingServiceBean implements DiseaseWarningMailingSe
   @Override
   public int warnAboutDisease(PetType petType, String disease, String city) {
 
-    List<Pet> petsInDiseaseCity = dataManager.load(Pet.class)
+    List<Pet> petsInDiseaseCity = findPetsInDiseaseCity(petType, city);
+
+    List<Pet> petsWithEmail = filterPetsWithValidOwnersEmail(petsInDiseaseCity);
+
+    petsWithEmail.forEach(pet -> sendEmailToPetsOwner(pet, disease, city));
+
+    return petsWithEmail.size();
+  }
+
+  private List<Pet> filterPetsWithValidOwnersEmail(List<Pet> petsInDiseaseCity) {
+    return petsInDiseaseCity
+        .stream()
+        .filter(pet -> !StringUtils.isEmpty(pet.getOwner().getEmail()))
+        .collect(Collectors.toList());
+  }
+
+  private void sendEmailToPetsOwner(Pet pet, String disease, String city) {
+    String emailSubject = "Warning about " + disease + " in the Area of " + city;
+
+    Map<String, Serializable> templateParameters = getTemplateParams(disease, city, pet);
+
+    String ownerEmail = pet.getOwner().getEmail();
+
+    EmailInfo email = new EmailInfo(
+        ownerEmail,
+        emailSubject,
+        null,
+        "com/cubaplatform/petclinic/templates/disease-warning-mailing.txt",
+        templateParameters
+    );
+
+    emailerAPI.sendEmailAsync(email);
+  }
+
+  private List<Pet> findPetsInDiseaseCity(PetType petType, String city) {
+    return dataManager.load(Pet.class)
         .query(
             "select e from petclinic_Pet e where e.owner.city = :ownerCity and e.type = :petType")
         .parameter("ownerCity", city)
         .parameter("petType", petType)
         .view("pet-with-owner-and-type")
         .list();
-
-    List<Pet> petsWithEmail = petsInDiseaseCity
-        .stream()
-        .filter(this::ownerHasEmail)
-        .collect(Collectors.toList());
-
-
-    petsWithEmail
-        .forEach(pet -> {
-
-          String emailSubject = "Warning about " + disease + " in the Area of " + city;
-
-          Map<String, Serializable> templateParameters = getTemplateParams(disease, city, pet);
-
-          String ownerEmail = pet.getOwner().getEmail();
-
-          EmailInfo email = new EmailInfo(
-              ownerEmail,
-              emailSubject,
-              null,
-              "com/cubaplatform/petclinic/templates/disease-warning-mailing.txt",
-              templateParameters
-          );
-
-          emailerAPI.sendEmailAsync(email);
-
-        });
-
-    return petsWithEmail.size();
-  }
-
-  private boolean ownerHasEmail(Pet pet) {
-    String ownerEmail = pet.getOwner().getEmail();
-    return !StringUtils.isEmpty(ownerEmail);
   }
 
   private Map<String, Serializable> getTemplateParams(String disease, String city, Pet pet) {
