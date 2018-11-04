@@ -4,8 +4,8 @@ import com.cubaplatform.petclinic.contact.Contact;
 import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.Notifications.NotificationType;
 import com.haulmont.cuba.gui.screen.FrameOwner;
+import com.haulmont.cuba.gui.screen.UiControllerUtils;
 import java.util.Optional;
-import javax.inject.Inject;
 import org.springframework.stereotype.Component;
 
 @Component("petclinic_PetContactDisplay")
@@ -25,8 +25,7 @@ public class PetContactDisplay {
     }
 
     private void showNotification(String notificationMsg, NotificationType notificationType, FrameOwner origin) {
-        Notifications notifications = origin
-            .getScreenContext()
+        Notifications notifications = UiControllerUtils.getScreenContext(origin)
             .getNotifications();
 
         notifications

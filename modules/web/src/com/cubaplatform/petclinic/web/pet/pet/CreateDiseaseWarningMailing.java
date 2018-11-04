@@ -6,7 +6,9 @@ import com.haulmont.cuba.gui.Notifications;
 import com.haulmont.cuba.gui.components.Action;
 import com.haulmont.cuba.gui.components.LookupField;
 import com.haulmont.cuba.gui.components.TextField;
+import com.haulmont.cuba.gui.screen.EditorScreen;
 import com.haulmont.cuba.gui.screen.Screen;
+import com.haulmont.cuba.gui.screen.StandardCloseAction;
 import com.haulmont.cuba.gui.screen.Subscribe;
 import com.haulmont.cuba.gui.screen.UiController;
 import com.haulmont.cuba.gui.screen.UiDescriptor;
@@ -44,7 +46,7 @@ public class CreateDiseaseWarningMailing extends Screen {
         int endangeredPets = diseaseWarningMailingService.warnAboutDisease(petType.getValue(),
             disease.getValue(), city.getValue());
 
-        closeWithCommit().then(() ->
+        close(new StandardCloseAction(EditorScreen.WINDOW_COMMIT_AND_CLOSE)).then(() ->
             notifications.create()
                 .setCaption(endangeredPets + " Owner(s) of endangered Pets have been notified")
                 .setType(Notifications.NotificationType.TRAY)
