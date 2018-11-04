@@ -5,6 +5,8 @@ import com.cubaplatform.petclinic.entity.pet.PetType;
 import com.haulmont.cuba.core.app.EmailerAPI;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.EmailInfo;
+import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -16,52 +18,69 @@ import java.util.Map;
 @Service(DiseaseWarningMailingService.NAME)
 public class DiseaseWarningMailingServiceBean implements DiseaseWarningMailingService {
 
-    @Inject
-    protected DataManager dataManager;
+  @Inject
+  protected DataManager dataManager;
 
 
-    @Inject
-    protected EmailerAPI emailerAPI;
+  @Inject
+  protected EmailerAPI emailerAPI;
 
 
-    @Override
-    public int warnAboutDisease(PetType petType, String disease, String city) {
+  @Override
+  public int warnAboutDisease(PetType petType, String disease, String city) {
 
-        List<Pet> petsInDiseaseCity = dataManager.load(Pet.class)
-                .query("select e from petclinic$Pet e where e.owner.city = :ownerCity and e.type.id = :petType")
-                .parameter("ownerCity", city)
-                .parameter("petType", petType)
-                .view("pet-with-owner-and-type")
-                .list();
+    List<Pet> petsInDiseaseCity = findPetsInDiseaseCity(petType, city);
 
-        petsInDiseaseCity.forEach(pet -> {
+    List<Pet> petsWithEmail = filterPetsWithValidOwnersEmail(petsInDiseaseCity);
 
-            String emailSubject = "Warning about " + disease + " in the Area of " + city;
+    petsWithEmail.forEach(pet -> sendEmailToPetsOwner(pet, disease, city));
 
-            Map<String, Serializable> templateParameters = getTemplateParams(disease, city, pet);
+    return petsWithEmail.size();
+  }
 
-            EmailInfo email = new EmailInfo(
-                    pet.getOwner().getEmail(),
-                    emailSubject,
-                    null,
-                    "com/cubaplatform/petclinic/templates/disease-warning-mailing.txt",
-                    templateParameters
-            );
+  private List<Pet> filterPetsWithValidOwnersEmail(List<Pet> petsInDiseaseCity) {
+    return petsInDiseaseCity
+        .stream()
+        .filter(pet -> !StringUtils.isEmpty(pet.getOwner().getEmail()))
+        .collect(Collectors.toList());
+  }
 
-            emailerAPI.sendEmailAsync(email);
-        });
+  private void sendEmailToPetsOwner(Pet pet, String disease, String city) {
+    String emailSubject = "Warning about " + disease + " in the Area of " + city;
 
-        return petsInDiseaseCity.size();
-    }
+    Map<String, Serializable> templateParameters = getTemplateParams(disease, city, pet);
 
-    private Map<String, Serializable> getTemplateParams(String disease, String city, Pet pet) {
-        Map<String, Serializable> templateParameters = new HashMap<>();
+    String ownerEmail = pet.getOwner().getEmail();
 
-        templateParameters.put("owner", pet.getOwner());
-        templateParameters.put("pet", pet);
-        templateParameters.put("disease", disease);
-        templateParameters.put("city", city);
-        return templateParameters;
-    }
+    EmailInfo email = new EmailInfo(
+        ownerEmail,
+        emailSubject,
+        null,
+        "com/cubaplatform/petclinic/templates/disease-warning-mailing.txt",
+        templateParameters
+    );
+
+    emailerAPI.sendEmailAsync(email);
+  }
+
+  private List<Pet> findPetsInDiseaseCity(PetType petType, String city) {
+    return dataManager.load(Pet.class)
+        .query(
+            "select e from petclinic_Pet e where e.owner.city = :ownerCity and e.type = :petType")
+        .parameter("ownerCity", city)
+        .parameter("petType", petType)
+        .view("pet-with-owner-and-type")
+        .list();
+  }
+
+  private Map<String, Serializable> getTemplateParams(String disease, String city, Pet pet) {
+    Map<String, Serializable> templateParameters = new HashMap<>();
+
+    templateParameters.put("owner", pet.getOwner());
+    templateParameters.put("pet", pet);
+    templateParameters.put("disease", disease);
+    templateParameters.put("city", city);
+    return templateParameters;
+  }
 
 }
