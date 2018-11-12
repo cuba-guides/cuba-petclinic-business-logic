@@ -9,6 +9,12 @@ The CUBA Petclinic application deals with the domain of a Pet clinic and the ass
 
 <a href="https://raw.githubusercontent.com/cuba-guides/cuba-petclinic-business-logic/master/img/adjustments-cuba-petclinic-overview.gif"><img src="https://raw.githubusercontent.com/cuba-guides/cuba-petclinic-business-logic/master/img/login-screen.png"/></a>
 
+## Domain model
+
+
+![CUBA Petclinic Domain model](https://github.com/cuba-platform/cuba-petclinic/blob/master/img/domain-model.png)
+
+
 ## starting the application
 
 #### start database
@@ -16,7 +22,7 @@ The CUBA Petclinic application deals with the domain of a Pet clinic and the ass
 ./start-db.sh
 ```
 
-#### start server
+#### start application
 ```
 ./restart-server.sh
 ```
