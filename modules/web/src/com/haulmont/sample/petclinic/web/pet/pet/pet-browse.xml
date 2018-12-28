@@ -6,7 +6,7 @@
     <data readOnly="true">
         <collection id="petsCt"
                     class="com.haulmont.sample.petclinic.entity.pet.Pet"
-                    view="pet-with-owner-and-type">
+                    view="pet-with-owner-and-type-and-visits">
             <loader id="petsLd">
                 <query>
                     <![CDATA[select e from petclinic_Pet e]]>

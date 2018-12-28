@@ -48,8 +48,8 @@ public class CreateDiseaseWarningMailing extends Screen {
 
         close(new StandardCloseAction(EditorScreen.WINDOW_COMMIT_AND_CLOSE)).then(() ->
             notifications.create()
-                .setCaption(endangeredPets + " Owner(s) of endangered Pets have been notified")
-                .setType(Notifications.NotificationType.TRAY)
+                .withCaption(endangeredPets + " Owner(s) of endangered Pets have been notified")
+                .withType(Notifications.NotificationType.TRAY)
                 .show()
         );
     }
