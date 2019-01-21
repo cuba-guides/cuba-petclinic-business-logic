@@ -4,10 +4,10 @@
         focusComponent="petsTable"
         messagesPack="com.haulmont.sample.petclinic.web.pet.pet">
     <data readOnly="true">
-        <collection id="petsCt"
+        <collection id="petsDc"
                     class="com.haulmont.sample.petclinic.entity.pet.Pet"
                     view="pet-with-owner-and-type-and-visits">
-            <loader id="petsLd">
+            <loader id="petsDl">
                 <query>
                     <![CDATA[select e from petclinic_Pet e]]>
                 </query>
@@ -20,11 +20,11 @@
             spacing="true">
         <filter id="filter"
                 applyTo="petsTable"
-                dataLoader="petsLd">
+                dataLoader="petsDl">
             <properties include=".*"/>
         </filter>
         <groupTable id="petsTable"
-                    dataContainer="petsCt"
+                    dataContainer="petsDc"
                     width="100%">
             <actions>
                 <action id="create" type="create"/>
@@ -71,5 +71,9 @@
                         action="petsTable.createDiseaseWarningMailing"/>
             </buttonsPanel>
         </groupTable>
+        <hbox id="lookupActions" spacing="true" visible="false">
+            <button action="lookupSelectAction"/>
+            <button action="lookupCancelAction"/>
+        </hbox>
     </layout>
 </window>
