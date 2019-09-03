@@ -49,8 +49,8 @@
         <textField property="name"/>
         <textField property="identificationNumber"/>
         <dateField property="birthDate"/>
-        <lookupPickerField property="type" optionsContainer="typesCt"/>
-        <lookupPickerField property="owner" optionsContainer="ownersCt"/>
+        <lookupPickerField property="type" optionsContainer="typesDc"/>
+        <lookupPickerField property="owner" optionsContainer="ownersDc"/>
       </column>
     </form>
 
