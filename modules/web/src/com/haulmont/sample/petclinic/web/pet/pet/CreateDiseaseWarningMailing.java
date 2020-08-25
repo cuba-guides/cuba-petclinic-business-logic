@@ -46,10 +46,10 @@ public class CreateDiseaseWarningMailing extends Screen {
         int endangeredPets = diseaseWarningMailingService.warnAboutDisease(petType.getValue(),
             disease.getValue(), city.getValue());
 
+
         close(new StandardCloseAction(EditorScreen.WINDOW_COMMIT_AND_CLOSE)).then(() ->
-            notifications.create()
+            notifications.create(Notifications.NotificationType.TRAY)
                 .withCaption(endangeredPets + " Owner(s) of endangered Pets have been notified")
-                .withType(Notifications.NotificationType.TRAY)
                 .show()
         );
     }
